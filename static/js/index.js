@@ -66,6 +66,54 @@ function findBreweries(event, page){
 
     fetch(url)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => displayBreweries(event, data, page))
         .catch(err => console.error(err))
+}
+
+// Function to add a cell of data to a row
+function newDataCell(tr, value){
+    let td = document.createElement('td');
+    td.innerText = value ?? '-';
+    tr.appendChild(td);
+}
+
+// Callback function for findBreweries that will write the info to the screen
+function displayBreweries(event, data, page){
+
+    let table = document.getElementById('brewery-table');
+    // TODO: Remove all the old results from the table
+    table.innerHTML = '';
+
+    // Create the Brewery Table Headers
+    const thead = document.createElement('thead');
+    table.append(thead);
+    let tr = document.createElement('tr');
+    thead.appendChild(tr);
+
+    const tableHeadings = ['Name', 'Type', 'Streeet Address', 'Address 2', 'Address 3', 'City', 'State'];
+
+    let th;
+    for (let heading of tableHeadings){
+        th = document.createElement('th');
+        th.scope = 'col';
+        th.innerText = heading;
+        tr.appendChild(th)
+    }
+
+    // Write the info for each brewery to the table
+    for (brewery of data){
+        tr=document.createElement("tr")
+        table.appendChild(tr)
+
+        const td = document.createElement('td')
+        td.innerHTML = `<a href=${brewery.website_url}>${brewery.name}</a>`
+
+        tr.appendChild(td);
+        newDataCell(tr, brewery.brewery_type);
+        newDataCell(tr, brewery.street);
+        newDataCell(tr, brewery.address_2);
+        newDataCell(tr, brewery.address_3);
+        newDataCell(tr, brewery.city);
+        newDataCell(tr, brewery.state);
+    }
 }
