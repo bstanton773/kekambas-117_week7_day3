@@ -10,6 +10,11 @@ function pageLoader(){
         btn.addEventListener('click', changeBackgroundColor);
     };
 
+    const navLinks = document.getElementsByClassName('nav-link')
+    for (let link of navLinks){
+        link.addEventListener('click', changeDiv)
+    }
+
 }
 
 
@@ -21,4 +26,24 @@ function changeBackgroundColor(e){
     } else {
         document.body.style.backgroundColor = '#FFF897'
     }
+}
+
+
+// Create a function to make this a Single Page App by swapping visible divs
+function changeDiv(e){
+    
+    // Turn off the element(s) that is currently being displayed
+    const toTurnOff = document.getElementsByClassName('is-visible');
+    for (let element of toTurnOff){
+        console.log('turning off', element);
+        element.classList.replace('is-visible', 'is-invisible');
+        let navLink = document.getElementsByName(element.id)[0];
+        navLink.classList.remove('active');
+    }
+
+    // Turn on the element based on the link that was clicked
+    let toTurnOnID = e.target.name;
+    const toTurnOn = document.getElementById(toTurnOnID);
+    toTurnOn.classList.replace('is-invisible', 'is-visible');
+    e.target.classList.add('active')
 }
