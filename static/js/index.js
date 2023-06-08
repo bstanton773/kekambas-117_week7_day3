@@ -51,6 +51,9 @@ function changeDiv(e){
     const toTurnOn = document.getElementById(toTurnOnID);
     toTurnOn.classList.replace('is-invisible', 'is-visible');
     e.target.classList.add('active')
+
+    // toggle the beer handler
+    toggleBeer();
 }
 
 
@@ -152,3 +155,56 @@ function displayBreweries(data, page){
         table.insertAdjacentElement('afterend', prevButton);
     }
 }
+
+
+// Move the glass with key strokes by changing the absolute position
+function handleBeerMove(event){
+    console.log(event.key);
+    const arrowKeys = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
+    // If the user presses one of these 4 keys
+    if (arrowKeys.includes(event.key)){
+        // Move the beer glass 5px in that direction
+        const glass = document.querySelector('.beerglass');
+        switch(event.key){
+            case 'ArrowRight':
+                glass.style.left = parseInt(glass.style.left.substring(0, glass.style.left.length-2)) + 5 + 'px';
+                break;
+            case 'ArrowLeft':
+                glass.style.left = parseInt(glass.style.left.substring(0, glass.style.left.length-2)) - 5 + 'px';
+                break;
+            case 'ArrowUp':
+                glass.style.top = parseInt(glass.style.top.substring(0, glass.style.top.length-2)) - 5 + 'px';
+                break;
+            case 'ArrowDown':
+                glass.style.top = parseInt(glass.style.top.substring(0, glass.style.top.length-2)) + 5 + 'px';
+                break;
+        }
+        // If the beer glass is in the coaster, flash a message
+        if (glass.style.top === '200px' && glass.style.left === '450px'){
+            setTimeout( () => { alert("Enjoy your mug!") } )
+        }
+    }
+}
+
+
+// Turn on key listening for beer movement
+function startBeerMove(){
+    console.log('listening for beer events');
+    document.addEventListener('keydown', handleBeerMove);
+}
+
+// Turn off key listening for beer movement
+function endBeerMove(){
+    console.log('no longer listening for beer events');
+    document.removeEventListener('keydown', handleBeerMove);
+}
+
+function toggleBeer(){
+    const divToCheck = document.getElementsByClassName('is-visible')[0];
+    if (divToCheck.id === 'grab'){
+        startBeerMove();
+    } else {
+        endBeerMove();
+    }
+}
+
