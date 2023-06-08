@@ -20,6 +20,9 @@ function pageLoader(){
     const findBrewsForm = document.querySelector('#find-brews-form');
     findBrewsForm.addEventListener('submit', e => findBreweries(e, 1));
 
+    // Load the Drag and Drop listeners
+    loadDragNDropBeer();
+
 }
 
 
@@ -208,3 +211,36 @@ function toggleBeer(){
     }
 }
 
+// Function to load event listeners for drag n drop
+function loadDragNDropBeer(){
+    const draggable = document.getElementById('draggable');
+    draggable.addEventListener('dragstart', drag);
+
+    const droppable = document.getElementById('droppable');
+    droppable.addEventListener('dragover', allowDrop);
+    droppable.addEventListener('drop', drop)
+}
+
+
+
+// Allow drop events by stopping the default behavior for dragover
+function allowDrop(event){
+    console.log("Allowing drop on ", event.target);
+    event.preventDefault();
+}
+
+
+// use the events dataTransfer to hold the beer glass while dragging
+function drag(event){
+    console.log('Dragging beer');
+    event.dataTransfer.setData('text', event.target.id);
+}
+
+// Add the beer to the coaster div
+function drop(event){
+    console.log('drop beer');
+    event.preventDefault();
+    const beerId = event.dataTransfer.getData('text');
+    console.log(beerId);
+    event.target.appendChild(document.getElementById(beerId));
+}
