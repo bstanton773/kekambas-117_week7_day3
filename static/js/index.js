@@ -66,7 +66,7 @@ function findBreweries(event, page){
 
     fetch(url)
         .then(response => response.json())
-        .then(data => displayBreweries(event, data, page))
+        .then(data => displayBreweries(data, page))
         .catch(err => console.error(err))
 }
 
@@ -77,12 +77,22 @@ function newDataCell(tr, value){
     tr.appendChild(td);
 }
 
+// Function to clear out the brewery table and remove buttons
+function clearBreweryTable(table){
+    table.innerHTML = '';
+    const buttonsToClear = document.querySelectorAll('.prev-next-btn');
+    for (let btn of buttonsToClear){
+        console.log("removing...", btn);
+        btn.remove()
+    }
+}
+
 // Callback function for findBreweries that will write the info to the screen
-function displayBreweries(event, data, page){
+function displayBreweries(data, page){
 
     let table = document.getElementById('brewery-table');
     // TODO: Remove all the old results from the table
-    table.innerHTML = '';
+    clearBreweryTable(table);
 
     // Create the Brewery Table Headers
     const thead = document.createElement('thead');
@@ -92,9 +102,8 @@ function displayBreweries(event, data, page){
 
     const tableHeadings = ['Name', 'Type', 'Streeet Address', 'Address 2', 'Address 3', 'City', 'State'];
 
-    let th;
     for (let heading of tableHeadings){
-        th = document.createElement('th');
+        let th = document.createElement('th');
         th.scope = 'col';
         th.innerText = heading;
         tr.appendChild(th)
@@ -106,7 +115,15 @@ function displayBreweries(event, data, page){
         table.appendChild(tr)
 
         const td = document.createElement('td')
-        td.innerHTML = `<a href=${brewery.website_url}>${brewery.name}</a>`
+        td.innerHTML = `<a href=${brewery.website_url} target="_blank">${brewery.name}</a>`
+
+        // Add copy event listener that will copy not only the name of brewery
+        // But also the the website as well
+        const copyString = `Visit ${brewery.name} at ${brewery.website_url}`
+        td.addEventListener('copy', (event) => {
+            event.clipboardData.setData('text/plain', copyString);
+            event.preventDefault();
+        })
 
         tr.appendChild(td);
         newDataCell(tr, brewery.brewery_type);
@@ -115,5 +132,23 @@ function displayBreweries(event, data, page){
         newDataCell(tr, brewery.address_3);
         newDataCell(tr, brewery.city);
         newDataCell(tr, brewery.state);
+    }
+
+    // Add a Next Button if there is data
+    if (data.length >= 0 && data.length == 10){
+        let nextButton = document.createElement('button');
+        nextButton.classList.add("prev-next-btn", "btn", "btn-primary");
+        nextButton.innerText = "Next";
+        nextButton.addEventListener('click', e => findBreweries(e, page+1));
+        table.insertAdjacentElement('afterend', nextButton);
+    }
+
+    // Add a Previous Button for all pages past 1
+    if (page > 1){
+        let prevButton = document.createElement('button');
+        prevButton.classList.add("prev-next-btn", "btn", "btn-danger");
+        prevButton.innerText = "Prev";
+        prevButton.addEventListener('click', e => findBreweries(e, page-1));
+        table.insertAdjacentElement('afterend', prevButton);
     }
 }
