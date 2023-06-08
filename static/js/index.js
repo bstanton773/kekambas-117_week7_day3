@@ -23,6 +23,8 @@ function pageLoader(){
     // Load the Drag and Drop listeners
     loadDragNDropBeer();
 
+    // Load the bubble listeners
+    addBubbleListeners();
 }
 
 
@@ -243,4 +245,14 @@ function drop(event){
     const beerId = event.dataTransfer.getData('text');
     console.log(beerId);
     event.target.appendChild(document.getElementById(beerId));
+}
+
+
+// Add click listeners to the Bubbles to show how events propogate
+function addBubbleListeners(){
+    const bubbles = document.getElementsByClassName('bubble');
+    
+    bubbles[0].addEventListener('click', event => {console.log("You clicked outer ... propogated from:", event.target.id);});
+    bubbles[1].addEventListener('click', event => {console.log("You clicked middle ... propogated from:", event.target.id);});
+    bubbles[2].addEventListener('click', event => {console.log("You clicked inner ... propogated from:", event.target.id);});
 }
